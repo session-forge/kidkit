@@ -122,55 +122,29 @@
                 setIsSearching(true);
                 setOnlineResults([]);
                 
-                // Create a unique callback name
-                const callbackName = 'googleBooksCallback_' + Date.now();
-                
-                // Create the callback function
-                window[callbackName] = (data) => {
-                    console.log('Google Books API Response:', data);
-                    try {
-                        if (data.items && data.items.length > 0) {
-                            const results = data.items.map(item => ({
-                                title: item.volumeInfo.title,
-                                author: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Unknown Author',
-                                series: item.volumeInfo.subtitle || '',
-                                thumbnail: item.volumeInfo.imageLinks?.thumbnail || ''
+                // Try Open Library API instead (no quota limits)
+                fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(onlineSearchTerm)}&limit=15`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Open Library API Response:', data);
+                        if (data.docs && data.docs.length > 0) {
+                            const results = data.docs.map(item => ({
+                                title: item.title || 'Unknown Title',
+                                author: item.author_name ? item.author_name.join(', ') : 'Unknown Author',
+                                series: item.subtitle || '',
+                                thumbnail: item.cover_i ? `https://covers.openlibrary.org/b/id/${item.cover_i}-M.jpg` : ''
                             }));
                             setOnlineResults(results);
-                            setIsSearching(false);
-                        } else if (data.totalItems === 0) {
-                            setIsSearching(false);
-                            alert('No books found for "' + onlineSearchTerm + '". Try a different search term.');
                         } else {
-                            setIsSearching(false);
-                            alert('No results returned. The search may have timed out. Please try again.');
+                            alert('No books found for "' + onlineSearchTerm + '". Try a different search term.');
                         }
-                    } catch (error) {
+                        setIsSearching(false);
+                    })
+                    .catch(error => {
                         console.error('Search error:', error);
                         setIsSearching(false);
-                        alert('Error processing search results: ' + error.message);
-                    } finally {
-                        // Clean up
-                        delete window[callbackName];
-                        if (document.head.contains(script)) {
-                            document.head.removeChild(script);
-                        }
-                    }
-                };
-                
-                // Create script tag for JSONP request
-                const script = document.createElement('script');
-                script.src = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(onlineSearchTerm)}&maxResults=15&printType=books&callback=${callbackName}`;
-                script.onerror = () => {
-                    setIsSearching(false);
-                    alert('Unable to connect to Google Books. Please check your internet connection and try again.');
-                    delete window[callbackName];
-                    if (document.head.contains(script)) {
-                        document.head.removeChild(script);
-                    }
-                };
-                
-                document.head.appendChild(script);
+                        alert('Unable to search online. Please check your internet connection and try again.');
+                    });
             };
 
             const selectOnlineBook = (book) => {
