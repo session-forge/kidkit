@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KidKit - Learning Tools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .tool-icon {
+            font-size: 4em;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .tool-title {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .tool-description {
+            color: #666;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .tool-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .tool-features li {
+            padding: 8px 0;
+            color: #555;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tool-features li:last-child {
+            border-bottom: none;
+        }
+
+        .tool-features li::before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .launch-btn {
+            display: block;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .launch-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            margin-top: 50px;
+            opacity: 0.9;
+        }
+
+        footer p {
+            margin-bottom: 10px;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .subtitle {
+                font-size: 1.1em;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎓 KidKit</h1>
+            <p class="subtitle">Interactive educational activities and games for young learners</p>
+        </header>
+
+        <div class="tools-grid">
+            <div class="tool-card">
+                <div class="tool-icon">📚</div>
+                <h2 class="tool-title">Book Tracker</h2>
+                <p class="tool-description">Track reading preferences and discover new books with personalized recommendations</p>
+                <ul class="tool-features">
+                    <li>Track liked and disliked books</li>
+                    <li>Smart recommendations based on reading history</li>
+                    <li>Search any book online</li>
+                    <li>Quick-add popular series</li>
+                    <li>Works offline with saved data</li>
+                </ul>
+                <a href="book-tracker.html" class="launch-btn">Open Book Tracker →</a>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-icon">🧩</div>
+                <h2 class="tool-title">Puzzle Generator</h2>
+                <p class="tool-description">Challenge your brain with age-appropriate riddles and logic puzzles</p>
+                <ul class="tool-features">
+                    <li>20 unique puzzles and riddles</li>
+                    <li>Hint system for guidance</li>
+                    <li>Track solved puzzles</li>
+                    <li>Detailed explanations</li>
+                    <li>Perfect for ages 8-12</li>
+                </ul>
+                <a href="puzzle-generator.html" class="launch-btn">Start Puzzles →</a>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-icon">🎭</div>
+                <h2 class="tool-title">Charades Generator</h2>
+                <p class="tool-description">Family-friendly charades prompts for hours of entertainment</p>
+                <ul class="tool-features">
+                    <li>360+ prompts across multiple categories</li>
+                    <li>Two game modes: Actions & Words</li>
+                    <li>Toggle categories on/off</li>
+                    <li>Books, movies, animals & more</li>
+                    <li>Great for family game night</li>
+                </ul>
+                <a href="charades-generator.html" class="launch-btn">Play Charades →</a>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>About These Tools</strong></p>
+            <p>These interactive learning tools are designed to support educational development and family fun.</p>
+            <p>All tools work offline and store data locally on your device.</p>
+            <p style="margin-top: 20px;">
+                <a href="https://github.com" target="_blank">View on GitHub</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

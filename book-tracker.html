@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4da6ff;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 0 0 10px rgba(77, 166, 255, 0.5);
+        }
+
+        .section {
+            background: rgba(30, 30, 50, 0.8);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(77, 166, 255, 0.3);
+        }
+
+        h2 {
+            color: #4da6ff;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .quick-add {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quick-add-btn {
+            background: linear-gradient(135deg, #2575fc 0%, #4da6ff 100%);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .quick-add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(77, 166, 255, 0.4);
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid rgba(77, 166, 255, 0.5);
+            border-radius: 8px;
+            background: rgba(20, 20, 35, 0.8);
+            color: #e0e0e0;
+            font-size: 16px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4da6ff;
+            box-shadow: 0 0 10px rgba(77, 166, 255, 0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, #2575fc 0%, #4da6ff 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(77, 166, 255, 0.4);
+        }
+
+        .book-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .book-item {
+            background: rgba(40, 40, 60, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(77, 166, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .book-item:hover {
+            border-color: #4da6ff;
+            box-shadow: 0 2px 8px rgba(77, 166, 255, 0.3);
+        }
+
+        .book-info {
+            flex: 1;
+        }
+
+        .book-title {
+            font-weight: bold;
+            color: #4da6ff;
+            margin-bottom: 5px;
+        }
+
+        .book-author {
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+
+        .remove-btn {
+            background: #cc3333;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .remove-btn:hover {
+            background: #ff4444;
+        }
+
+        .recommendations {
+            margin-top: 20px;
+        }
+
+        .rec-item {
+            background: rgba(40, 40, 60, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(77, 166, 255, 0.2);
+        }
+
+        .rec-title {
+            font-weight: bold;
+            color: #4da6ff;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .rec-author {
+            color: #a0a0a0;
+            margin-bottom: 8px;
+        }
+
+        .rec-reason {
+            color: #b0b0b0;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .rec-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .skip-btn {
+            background: linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%);
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .search-results {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .search-result-item {
+            background: rgba(40, 40, 60, 0.6);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(77, 166, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .loading {
+            text-align: center;
+            color: #4da6ff;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .book-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Book Tracker</h1>
+
+        <div class="section">
+            <h2>Quick Add Popular Series</h2>
+            <div class="quick-add" id="quickAddContainer"></div>
+        </div>
+
+        <div class="section">
+            <h2>Search for Books Online</h2>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search for any book...">
+                <button onclick="searchBooks()">Search</button>
+            </div>
+            <div id="searchResults" class="search-results"></div>
+        </div>
+
+        <div class="section">
+            <h2>📖 Read & Liked</h2>
+            <div class="book-list" id="likedBooks"></div>
+        </div>
+
+        <div class="section">
+            <h2>❌ Didn't Like</h2>
+            <div class="book-list" id="dislikedBooks"></div>
+        </div>
+
+        <div class="section">
+            <h2>💡 Recommendations</h2>
+            <div class="recommendations" id="recommendations"></div>
+        </div>
+    </div>
+
+    <script>
+        const POPULAR_BOOKS = [
+            { title: "Percy Jackson & the Olympians", author: "Rick Riordan" },
+            { title: "Harry Potter", author: "J.K. Rowling" },
+            { title: "Fablehaven", author: "Brandon Mull" },
+            { title: "Aru Shah", author: "Roshani Chokshi" },
+            { title: "The Unwanteds", author: "Lisa McMann" },
+            { title: "Alcatraz vs. the Evil Librarians", author: "Brandon Sanderson" },
+            { title: "Keeper of the Lost Cities", author: "Shannon Messenger" },
+            { title: "Wings of Fire", author: "Tui T. Sutherland" },
+            { title: "The Land of Stories", author: "Chris Colfer" },
+            { title: "Spirit Animals", author: "Various Authors" }
+        ];
+
+        const BOOK_DATABASE = [
+            { title: "Percy Jackson & the Olympians", author: "Rick Riordan", tags: ["greek mythology", "adventure", "magic", "quest"] },
+            { title: "Harry Potter", author: "J.K. Rowling", tags: ["magic", "wizards", "adventure", "friendship", "school"] },
+            { title: "Fablehaven", author: "Brandon Mull", tags: ["fantasy", "magical creatures", "adventure", "siblings"] },
+            { title: "Dragonwatch", author: "Brandon Mull", tags: ["fantasy", "dragons", "adventure", "magical creatures"] },
+            { title: "Aru Shah and the End of Time", author: "Roshani Chokshi", tags: ["hindu mythology", "adventure", "magic", "quest"] },
+            { title: "The Kane Chronicles", author: "Rick Riordan", tags: ["egyptian mythology", "adventure", "magic", "siblings"] },
+            { title: "Magnus Chase and the Gods of Asgard", author: "Rick Riordan", tags: ["norse mythology", "adventure", "magic", "quest"] },
+            { title: "The Trials of Apollo", author: "Rick Riordan", tags: ["greek mythology", "adventure", "magic", "humor"] },
+            { title: "Keeper of the Lost Cities", author: "Shannon Messenger", tags: ["fantasy", "telepathy", "adventure", "mystery"] },
+            { title: "Wings of Fire", author: "Tui T. Sutherland", tags: ["dragons", "fantasy", "adventure", "prophecy"] },
+            { title: "The Land of Stories", author: "Chris Colfer", tags: ["fairy tales", "adventure", "siblings", "fantasy"] },
+            { title: "Spirit Animals", author: "Various Authors", tags: ["fantasy", "adventure", "animals", "quest"] },
+            { title: "The Unwanteds", author: "Lisa McMann", tags: ["fantasy", "magic", "adventure", "creativity"] },
+            { title: "Alcatraz vs. the Evil Librarians", author: "Brandon Sanderson", tags: ["fantasy", "humor", "adventure", "magic"] },
+            { title: "The Secrets of the Immortal Nicholas Flamel", author: "Michael Scott", tags: ["mythology", "magic", "adventure", "alchemy"] },
+            { title: "Artemis Fowl", author: "Eoin Colfer", tags: ["fantasy", "technology", "adventure", "fairies"] },
+            { title: "The Chronicles of Narnia", author: "C.S. Lewis", tags: ["fantasy", "adventure", "magic", "talking animals"] },
+            { title: "A Tale Dark & Grimm", author: "Adam Gidwitz", tags: ["fairy tales", "adventure", "dark humor"] },
+            { title: "The School for Good and Evil", author: "Soman Chainani", tags: ["fairy tales", "magic", "adventure", "school"] },
+            { title: "The Dragon Pearl", author: "Yoon Ha Lee", tags: ["korean mythology", "space", "adventure", "magic"] },
+            { title: "Tristan Strong Punches a Hole in the Sky", author: "Kwame Mbalia", tags: ["african mythology", "adventure", "magic"] },
+            { title: "City of the Plague God", author: "Sarwat Chadda", tags: ["mesopotamian mythology", "adventure", "magic"] },
+            { title: "Race to the Sun", author: "Rebecca Roanhorse", tags: ["navajo mythology", "adventure", "magic"] },
+            { title: "Paola Santiago", author: "Tehlor Kay Mejia", tags: ["mexican mythology", "adventure", "magic", "mystery"] },
+            { title: "The Storm Runner", author: "J.C. Cervantes", tags: ["mayan mythology", "adventure", "magic", "quest"] }
+        ];
+
+        let likedBooks = JSON.parse(localStorage.getItem('likedBooks')) || [];
+        let dislikedBooks = JSON.parse(localStorage.getItem('dislikedBooks')) || [];
+
+        function saveData() {
+            localStorage.setItem('likedBooks', JSON.stringify(likedBooks));
+            localStorage.setItem('dislikedBooks', JSON.stringify(dislikedBooks));
+        }
+
+        function renderQuickAdd() {
+            const container = document.getElementById('quickAddContainer');
+            container.innerHTML = POPULAR_BOOKS.map(book => 
+                `<button class="quick-add-btn" onclick='quickAddBook(${JSON.stringify(book)})'>${book.title}</button>`
+            ).join('');
+        }
+
+        function quickAddBook(book) {
+            if (!likedBooks.some(b => b.title === book.title) && !dislikedBooks.some(b => b.title === book.title)) {
+                likedBooks.push(book);
+                saveData();
+                renderBooks();
+                generateRecommendations();
+            }
+        }
+
+        function addBook(book, liked = true) {
+            const targetList = liked ? likedBooks : dislikedBooks;
+            const otherList = liked ? dislikedBooks : likedBooks;
+            
+            const existsInTarget = targetList.some(b => b.title === book.title);
+            const existsInOther = otherList.some(b => b.title === book.title);
+            
+            if (existsInTarget) {
+                return;
+            }
+            
+            if (existsInOther) {
+                const index = otherList.findIndex(b => b.title === book.title);
+                otherList.splice(index, 1);
+            }
+            
+            targetList.push(book);
+            saveData();
+            renderBooks();
+            if (liked) {
+                generateRecommendations();
+            }
+        }
+
+        function removeBook(title, fromLiked) {
+            if (fromLiked) {
+                likedBooks = likedBooks.filter(book => book.title !== title);
+            } else {
+                dislikedBooks = dislikedBooks.filter(book => book.title !== title);
+            }
+            saveData();
+            renderBooks();
+            if (fromLiked) {
+                generateRecommendations();
+            }
+        }
+
+        function renderBooks() {
+            const likedContainer = document.getElementById('likedBooks');
+            const dislikedContainer = document.getElementById('dislikedBooks');
+
+            likedContainer.innerHTML = likedBooks.length === 0 
+                ? '<p style="color: #888;">No books added yet. Use quick add or search to get started!</p>'
+                : likedBooks.map(book => `
+                    <div class="book-item">
+                        <div class="book-info">
+                            <div class="book-title">${book.title}</div>
+                            <div class="book-author">${book.author}</div>
+                        </div>
+                        <button class="remove-btn" onclick="removeBook('${book.title}', true)">Remove</button>
+                    </div>
+                `).join('');
+
+            dislikedContainer.innerHTML = dislikedBooks.length === 0
+                ? '<p style="color: #888;">No books marked as disliked yet.</p>'
+                : dislikedBooks.map(book => `
+                    <div class="book-item">
+                        <div class="book-info">
+                            <div class="book-title">${book.title}</div>
+                            <div class="book-author">${book.author}</div>
+                        </div>
+                        <button class="remove-btn" onclick="removeBook('${book.title}', false)">Remove</button>
+                    </div>
+                `).join('');
+        }
+
+        function generateRecommendations() {
+            if (likedBooks.length === 0) {
+                document.getElementById('recommendations').innerHTML = 
+                    '<p style="color: #888;">Add some books you like to get personalized recommendations!</p>';
+                return;
+            }
+
+            const likedTitles = likedBooks.map(b => b.title.toLowerCase());
+            const dislikedTitles = dislikedBooks.map(b => b.title.toLowerCase());
+
+            const likedTags = new Map();
+            likedBooks.forEach(likedBook => {
+                const dbBook = BOOK_DATABASE.find(b => b.title === likedBook.title);
+                if (dbBook) {
+                    dbBook.tags.forEach(tag => {
+                        likedTags.set(tag, (likedTags.get(tag) || 0) + 1);
+                    });
+                }
+            });
+
+            const scored = BOOK_DATABASE
+                .filter(book => 
+                    !likedTitles.includes(book.title.toLowerCase()) && 
+                    !dislikedTitles.includes(book.title.toLowerCase())
+                )
+                .map(book => {
+                    let score = 0;
+                    let matchedTags = [];
+                    
+                    book.tags.forEach(tag => {
+                        if (likedTags.has(tag)) {
+                            score += likedTags.get(tag);
+                            matchedTags.push(tag);
+                        }
+                    });
+
+                    return { ...book, score, matchedTags };
+                })
+                .filter(book => book.score > 0)
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 5);
+
+            if (scored.length === 0) {
+                document.getElementById('recommendations').innerHTML = 
+                    '<p style="color: #888;">No more recommendations available. Try searching for books online!</p>';
+                return;
+            }
+
+            document.getElementById('recommendations').innerHTML = scored.map(book => `
+                <div class="rec-item">
+                    <div class="rec-title">${book.title}</div>
+                    <div class="rec-author">by ${book.author}</div>
+                    <div class="rec-reason">Recommended because you liked: ${book.matchedTags.join(', ')}</div>
+                    <div class="rec-actions">
+                        <button class="add-btn" onclick='addBook(${JSON.stringify({title: book.title, author: book.author})}, true)'>Add to Liked</button>
+                        <button class="skip-btn" onclick='addBook(${JSON.stringify({title: book.title, author: book.author})}, false)'>Not Interested</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function searchBooks() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            const resultsContainer = document.getElementById('searchResults');
+            resultsContainer.innerHTML = '<div class="loading">Searching...</div>';
+
+            try {
+                const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10`);
+                const data = await response.json();
+
+                if (!data.items || data.items.length === 0) {
+                    resultsContainer.innerHTML = '<p style="color: #888;">No books found. Try a different search term.</p>';
+                    return;
+                }
+
+                resultsContainer.innerHTML = data.items.map(item => {
+                    const book = item.volumeInfo;
+                    const title = book.title || 'Unknown Title';
+                    const authors = book.authors ? book.authors.join(', ') : 'Unknown Author';
+                    
+                    return `
+                        <div class="search-result-item">
+                            <div class="book-info">
+                                <div class="book-title">${title}</div>
+                                <div class="book-author">${authors}</div>
+                            </div>
+                            <div class="rec-actions">
+                                <button class="add-btn" onclick='addBook(${JSON.stringify({title, author: authors})}, true)'>Add to Liked</button>
+                                <button class="skip-btn" onclick='addBook(${JSON.stringify({title, author: authors})}, false)'>Not Interested</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                resultsContainer.innerHTML = '<p style="color: #cc3333;">Error searching for books. Please try again.</p>';
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchBooks();
+            }
+        });
+
+        renderQuickAdd();
+        renderBooks();
+        generateRecommendations();
+    </script>
+</body>
+</html>

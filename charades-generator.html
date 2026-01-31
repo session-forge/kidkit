@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charades Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #f5576c;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .mode-btn {
+            padding: 15px 30px;
+            border: 2px solid #f5576c;
+            background: white;
+            color: #f5576c;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .prompt-display {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-display {
+            text-align: center;
+            color: #f5576c;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+
+        button.generate-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+            margin-bottom: 30px;
+        }
+
+        button.generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        .category-toggles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .category-toggle {
+            padding: 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .category-toggle.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .category-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .mode-description {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #1565C0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .prompt-display {
+                font-size: 1.5em;
+                padding: 30px 20px;
+            }
+
+            .mode-selector {
+                flex-direction: column;
+            }
+
+            .mode-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 Charades!</h1>
+        <p class="subtitle">Act it out!</p>
+
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="setMode('actions')">Actions Mode</button>
+            <button class="mode-btn" onclick="setMode('words')">Words Mode</button>
+        </div>
+
+        <div class="mode-description" id="modeDescription">
+            Full-body acting - use your whole body to act out the prompt!
+        </div>
+
+        <div class="category-display" id="categoryDisplay">Click "New Prompt" to start!</div>
+        <div class="prompt-display" id="promptDisplay">🎬</div>
+
+        <button class="generate-btn" onclick="generatePrompt()">New Prompt</button>
+
+        <div class="category-toggles" id="categoryToggles"></div>
+    </div>
+
+    <script>
+        const prompts = {
+            actions: {
+                "Animals": [
+                    "Elephant swinging its trunk",
+                    "Penguin waddling on ice",
+                    "Monkey swinging from trees",
+                    "Cat cleaning itself",
+                    "Dog chasing its tail",
+                    "Bird building a nest",
+                    "Kangaroo hopping",
+                    "Snake slithering",
+                    "Bear catching fish",
+                    "Octopus swimming",
+                    "Dolphin jumping",
+                    "Horse galloping",
+                    "Frog jumping on lily pads",
+                    "Crab walking sideways",
+                    "Gorilla beating chest"
+                ],
+                "Movies": [
+                    "Harry Potter casting a spell",
+                    "Spider-Man shooting webs",
+                    "Finding Nemo swimming",
+                    "The Lion King - Circle of Life",
+                    "Frozen - Let It Go",
+                    "Toy Story - Buzz Lightyear flying",
+                    "Kung Fu Panda fighting",
+                    "Moana sailing the ocean",
+                    "The Incredibles using superpowers",
+                    "Inside Out - different emotions",
+                    "Jurassic Park - running from T-Rex",
+                    "Star Wars - lightsaber duel",
+                    "Home Alone - setting traps",
+                    "E.T. phone home",
+                    "The Wizard of Oz - yellow brick road"
+                ],
+                "TV Shows": [
+                    "Cooking competition",
+                    "Game show contestant",
+                    "News anchor reporting",
+                    "Cartoon character running",
+                    "Magician performing trick",
+                    "Dance competition",
+                    "Talent show audition",
+                    "Weather forecaster",
+                    "Sports announcer",
+                    "Talk show host"
+                ],
+                "Activities": [
+                    "Playing basketball",
+                    "Swimming underwater",
+                    "Riding a bicycle",
+                    "Building a sandcastle",
+                    "Flying a kite",
+                    "Rock climbing",
+                    "Playing video games",
+                    "Making a pizza",
+                    "Washing a car",
+                    "Planting a garden",
+                    "Painting a picture",
+                    "Playing the drums",
+                    "Skateboarding",
+                    "Ice skating",
+                    "Jumping on a trampoline",
+                    "Bowling",
+                    "Fishing",
+                    "Camping and setting up tent",
+                    "Playing soccer",
+                    "Doing magic tricks"
+                ],
+                "Occupations": [
+                    "Chef cooking a meal",
+                    "Firefighter putting out fire",
+                    "Construction worker building",
+                    "Teacher writing on board",
+                    "Doctor examining patient",
+                    "Police officer directing traffic",
+                    "Astronaut in zero gravity",
+                    "Pilot flying plane",
+                    "Dentist checking teeth",
+                    "Photographer taking pictures",
+                    "Farmer milking cow",
+                    "Mail carrier delivering packages",
+                    "Librarian organizing books",
+                    "Musician playing guitar",
+                    "Athlete running race"
+                ],
+                "Fantasy & Magic": [
+                    "Wizard casting spell",
+                    "Dragon breathing fire",
+                    "Fairy flying around",
+                    "Superhero saving the day",
+                    "Knight fighting dragon",
+                    "Elf making toys",
+                    "Genie granting wishes",
+                    "Mermaid swimming",
+                    "Giant stomping around",
+                    "Unicorn prancing",
+                    "Vampire turning into bat",
+                    "Werewolf transforming",
+                    "Ghost haunting house",
+                    "Troll guarding bridge",
+                    "Phoenix rising from ashes"
+                ],
+                "Books": [
+                    "Harry Potter - Quidditch match",
+                    "Percy Jackson - fighting monster",
+                    "The Hobbit - finding treasure",
+                    "Charlotte's Web - spider spinning",
+                    "Where the Wild Things Are - being wild",
+                    "The Cat in the Hat - balancing things",
+                    "Matilda - reading with magic",
+                    "Diary of a Wimpy Kid - school drama",
+                    "The BFG - catching dreams",
+                    "James and the Giant Peach - rolling away"
+                ]
+            },
+            words: {
+                "Animals": [
+                    "Elephant",
+                    "Penguin",
+                    "Octopus",
+                    "Butterfly",
+                    "Giraffe",
+                    "Kangaroo",
+                    "Crocodile",
+                    "Flamingo",
+                    "Porcupine",
+                    "Chameleon",
+                    "Platypus",
+                    "Raccoon",
+                    "Seahorse",
+                    "Peacock",
+                    "Hedgehog"
+                ],
+                "Movies": [
+                    "Frozen",
+                    "Moana",
+                    "Encanto",
+                    "Coco",
+                    "Up",
+                    "Brave",
+                    "Tangled",
+                    "Ratatouille",
+                    "WALL-E",
+                    "Zootopia",
+                    "Big Hero 6",
+                    "Inside Out",
+                    "The Incredibles",
+                    "Finding Nemo",
+                    "Toy Story"
+                ],
+                "TV Shows": [
+                    "Bluey",
+                    "Avatar",
+                    "Gravity Falls",
+                    "The Mandalorian",
+                    "Stranger Things",
+                    "Wednesday",
+                    "Phineas and Ferb",
+                    "Adventure Time",
+                    "Steven Universe",
+                    "The Amazing World of Gumball"
+                ],
+                "Activities": [
+                    "Swimming",
+                    "Skateboarding",
+                    "Photography",
+                    "Gardening",
+                    "Painting",
+                    "Baking",
+                    "Origami",
+                    "Juggling",
+                    "Archery",
+                    "Surfing",
+                    "Knitting",
+                    "Sculpting",
+                    "Hiking",
+                    "Rock climbing",
+                    "Yoga"
+                ],
+                "Occupations": [
+                    "Astronaut",
+                    "Archaeologist",
+                    "Veterinarian",
+                    "Chef",
+                    "Photographer",
+                    "Librarian",
+                    "Scientist",
+                    "Detective",
+                    "Firefighter",
+                    "Pilot",
+                    "Marine Biologist",
+                    "Artist",
+                    "Musician",
+                    "Athlete",
+                    "Author"
+                ],
+                "Fantasy & Magic": [
+                    "Dragon",
+                    "Unicorn",
+                    "Phoenix",
+                    "Centaur",
+                    "Mermaid",
+                    "Griffin",
+                    "Pegasus",
+                    "Werewolf",
+                    "Fairy",
+                    "Wizard",
+                    "Elf",
+                    "Goblin",
+                    "Troll",
+                    "Giant",
+                    "Vampire"
+                ],
+                "Books": [
+                    "Harry Potter",
+                    "Percy Jackson",
+                    "The Hobbit",
+                    "Narnia",
+                    "Matilda",
+                    "Wonder",
+                    "Holes",
+                    "Hatchet",
+                    "Fablehaven",
+                    "Wings of Fire",
+                    "Keeper of the Lost Cities",
+                    "The Lightning Thief",
+                    "Charlie and the Chocolate Factory",
+                    "Bridge to Terabithia",
+                    "A Wrinkle in Time"
+                ],
+                "Places": [
+                    "Beach",
+                    "Mountain",
+                    "Desert",
+                    "Jungle",
+                    "Arctic",
+                    "Volcano",
+                    "Cave",
+                    "Castle",
+                    "Space Station",
+                    "Underwater City",
+                    "Theme Park",
+                    "Library",
+                    "Museum",
+                    "Zoo",
+                    "Aquarium"
+                ]
+            }
+        };
+
+        let currentMode = 'actions';
+        let activeCategories = new Set(Object.keys(prompts.actions));
+
+        function setMode(mode) {
+            currentMode = mode;
+            
+            const buttons = document.querySelectorAll('.mode-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const description = document.getElementById('modeDescription');
+            if (mode === 'actions') {
+                description.textContent = 'Full-body acting - use your whole body to act out the prompt!';
+            } else {
+                description.textContent = 'Words mode - act out using only arms, hands, and face while seated!';
+            }
+            
+            activeCategories = new Set(Object.keys(prompts[currentMode]));
+            renderCategoryToggles();
+            
+            document.getElementById('promptDisplay').textContent = '🎬';
+            document.getElementById('categoryDisplay').textContent = 'Click "New Prompt" to start!';
+        }
+
+        function renderCategoryToggles() {
+            const container = document.getElementById('categoryToggles');
+            const categories = Object.keys(prompts[currentMode]);
+            
+            container.innerHTML = categories.map(category => `
+                <div class="category-toggle ${activeCategories.has(category) ? 'active' : ''}" 
+                     onclick="toggleCategory('${category}')">
+                    ${category}
+                </div>
+            `).join('');
+        }
+
+        function toggleCategory(category) {
+            if (activeCategories.has(category)) {
+                activeCategories.delete(category);
+            } else {
+                activeCategories.add(category);
+            }
+            renderCategoryToggles();
+        }
+
+        function generatePrompt() {
+            if (activeCategories.size === 0) {
+                alert('Please select at least one category!');
+                return;
+            }
+
+            const activeCategoriesArray = Array.from(activeCategories);
+            const randomCategory = activeCategoriesArray[Math.floor(Math.random() * activeCategoriesArray.length)];
+            const categoryPrompts = prompts[currentMode][randomCategory];
+            const randomPrompt = categoryPrompts[Math.floor(Math.random() * categoryPrompts.length)];
+
+            document.getElementById('categoryDisplay').textContent = `Category: ${randomCategory}`;
+            document.getElementById('promptDisplay').textContent = randomPrompt;
+        }
+
+        renderCategoryToggles();
+    </script>
+</body>
+</html>

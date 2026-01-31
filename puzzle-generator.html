@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzle & Riddle Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .puzzle-display {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.3em;
+            line-height: 1.6;
+            color: #333;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-tertiary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-tertiary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(79, 172, 254, 0.4);
+        }
+
+        .answer-section {
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .hint {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            color: #856404;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .answer-reveal {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            color: #0d47a1;
+        }
+
+        .answer-reveal strong {
+            color: #1976D2;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧩 Puzzle Time!</h1>
+        <p class="subtitle">Can you solve these brain teasers?</p>
+
+        <div class="puzzle-display" id="puzzleDisplay">
+            Click "New Puzzle" to get started!
+        </div>
+
+        <div class="controls">
+            <button class="btn-primary" onclick="newPuzzle()">New Puzzle</button>
+            <button class="btn-secondary" onclick="showHint()">Show Hint</button>
+            <button class="btn-tertiary" onclick="showAnswer()">Show Answer</button>
+        </div>
+
+        <div id="hintDisplay"></div>
+        <div id="feedbackDisplay"></div>
+        <div id="answerReveal"></div>
+
+        <div class="answer-section">
+            <input 
+                type="text" 
+                id="answerInput" 
+                placeholder="Type your answer here..."
+            >
+            <button class="btn-primary" onclick="checkAnswer()" style="width: 100%;">Check Answer</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="solvedCount">0</div>
+                <div class="stat-label">Solved</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const puzzles = [
+            {
+                question: "What has hands but cannot clap?",
+                answer: "clock",
+                hint: "It also has a face but no eyes!",
+                explanation: "A clock has hands (hour and minute hands) but it can't clap!"
+            },
+            {
+                question: "What has to be broken before you can use it?",
+                answer: "egg",
+                hint: "Think about breakfast!",
+                explanation: "An egg must be cracked or broken before you can cook or eat it!"
+            },
+            {
+                question: "I'm tall when I'm young, and I'm short when I'm old. What am I?",
+                answer: "candle",
+                hint: "Think about something that melts...",
+                explanation: "A candle is tall when new and gets shorter as it burns!"
+            },
+            {
+                question: "What gets wet while drying?",
+                answer: "towel",
+                hint: "You use it after a shower!",
+                explanation: "A towel gets wet when it dries you off!"
+            },
+            {
+                question: "What can you catch but not throw?",
+                answer: "cold",
+                hint: "It might make you sneeze!",
+                explanation: "You can catch a cold, but you can't throw it!"
+            },
+            {
+                question: "What has many keys but can't open a single lock?",
+                answer: "piano",
+                hint: "It makes beautiful music!",
+                explanation: "A piano has many keys (the black and white ones you press) but can't open locks!"
+            },
+            {
+                question: "What runs all around a backyard, yet never moves?",
+                answer: "fence",
+                hint: "It separates your yard from your neighbor's!",
+                explanation: "A fence runs around the edge of a yard but stays in one place!"
+            },
+            {
+                question: "What has a head and a tail but no body?",
+                answer: "coin",
+                hint: "You can flip it!",
+                explanation: "A coin has a head side and a tail side, but no body!"
+            },
+            {
+                question: "The more you take, the more you leave behind. What am I?",
+                answer: "footsteps",
+                hint: "Think about walking!",
+                explanation: "The more steps you take, the more footprints you leave behind!"
+            },
+            {
+                question: "What has 88 keys but can't open a single door?",
+                answer: "piano",
+                hint: "It's a musical instrument!",
+                explanation: "A piano has 88 keys (52 white and 36 black) but can't open doors!"
+            },
+            {
+                question: "A farmer has 17 sheep. All but 9 die. How many are left?",
+                answer: "9",
+                hint: "Read carefully - 'all but 9' means...",
+                explanation: "If all but 9 die, that means 9 survive! The answer is 9."
+            },
+            {
+                question: "If you have me, you want to share me. If you share me, you don't have me. What am I?",
+                answer: "secret",
+                hint: "Think about something you tell other people!",
+                explanation: "A secret! If you share a secret, it's no longer a secret!"
+            },
+            {
+                question: "What goes up but never comes down?",
+                answer: "age",
+                hint: "Everyone has one and it increases every year!",
+                explanation: "Your age! It only goes up, never down!"
+            },
+            {
+                question: "I have cities, but no houses. I have mountains, but no trees. I have water, but no fish. What am I?",
+                answer: "map",
+                hint: "You use it to find your way!",
+                explanation: "A map shows cities, mountains, and water, but doesn't have actual houses, trees, or fish!"
+            },
+            {
+                question: "What begins with T, ends with T, and has T in it?",
+                answer: "teapot",
+                hint: "You pour tea from it!",
+                explanation: "A teapot begins with T, ends with T, and has tea (T) in it!"
+            },
+            {
+                question: "If two's company and three's a crowd, what are four and five?",
+                answer: "nine",
+                hint: "Think about math, not people!",
+                explanation: "Four plus five equals nine! It's a math trick!"
+            },
+            {
+                question: "A farmer had 15 sheep, and all but 8 died. How many are left?",
+                answer: "8",
+                hint: "The key words are 'all but 8'...",
+                explanation: "If all but 8 died, then 8 sheep survived!"
+            },
+            {
+                question: "What belongs to you but other people use it more than you?",
+                answer: "name",
+                hint: "Other people say it when they talk to you!",
+                explanation: "Your name! Other people use your name more often than you do!"
+            },
+            {
+                question: "A rooster laid an egg on top of a barn roof. Which way did it roll?",
+                answer: "roosters don't lay eggs",
+                hint: "Think carefully about what roosters can and can't do!",
+                explanation: "Roosters don't lay eggs - only hens do! This is a trick question!"
+            },
+            {
+                question: "You see a boat filled with people. It has not sunk, but when you look again you don't see a single person. Why?",
+                answer: "they were all married",
+                hint: "The opposite of 'single' is...",
+                explanation: "They were all married, so there were no 'single' people! It's a play on words!"
+            }
+        ];
+
+        let currentPuzzle = null;
+        let solved = 0;
+        let total = 0;
+        let hintShown = false;
+
+        function newPuzzle() {
+            currentPuzzle = puzzles[Math.floor(Math.random() * puzzles.length)];
+            document.getElementById('puzzleDisplay').textContent = currentPuzzle.question;
+            document.getElementById('hintDisplay').innerHTML = '';
+            document.getElementById('feedbackDisplay').innerHTML = '';
+            document.getElementById('answerReveal').innerHTML = '';
+            document.getElementById('answerInput').value = '';
+            hintShown = false;
+        }
+
+        function showHint() {
+            if (currentPuzzle && !hintShown) {
+                document.getElementById('hintDisplay').innerHTML = 
+                    `<div class="hint">💡 Hint: ${currentPuzzle.hint}</div>`;
+                hintShown = true;
+            }
+        }
+
+        function showAnswer() {
+            if (currentPuzzle) {
+                document.getElementById('answerReveal').innerHTML = 
+                    `<div class="answer-reveal"><strong>Answer:</strong> ${currentPuzzle.answer}<br><br>${currentPuzzle.explanation}</div>`;
+            }
+        }
+
+        function normalizeAnswer(answer) {
+            return answer.toLowerCase().trim().replace(/[^a-z0-9\s]/g, '');
+        }
+
+        function checkAnswer() {
+            if (!currentPuzzle) {
+                alert('Click "New Puzzle" first!');
+                return;
+            }
+
+            const userAnswer = document.getElementById('answerInput').value;
+            const normalizedUser = normalizeAnswer(userAnswer);
+            const normalizedCorrect = normalizeAnswer(currentPuzzle.answer);
+            
+            const answerWords = normalizedCorrect.split(' ');
+            const userWords = normalizedUser.split(' ');
+            
+            const isCorrect = answerWords.every(word => userWords.includes(word)) ||
+                            normalizedUser === normalizedCorrect ||
+                            normalizedUser.includes(normalizedCorrect);
+
+            total++;
+            document.getElementById('totalCount').textContent = total;
+
+            if (isCorrect) {
+                solved++;
+                document.getElementById('solvedCount').textContent = solved;
+                document.getElementById('feedbackDisplay').innerHTML = 
+                    `<div class="feedback correct">🎉 Correct! ${currentPuzzle.explanation}</div>`;
+            } else {
+                document.getElementById('feedbackDisplay').innerHTML = 
+                    `<div class="feedback incorrect">❌ Not quite! Try again or click "Show Answer" to see the solution.</div>`;
+            }
+        }
+
+        document.getElementById('answerInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        newPuzzle();
+    </script>
+</body>
+</html>
