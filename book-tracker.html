@@ -129,6 +129,7 @@
             
             // Create the callback function
             window[callbackName] = (data) => {
+                console.log('Google Books API Response:', data);
                 try {
                     if (data.items && data.items.length > 0) {
                         const results = data.items.map(item => ({
@@ -138,17 +139,24 @@
                             thumbnail: item.volumeInfo.imageLinks?.thumbnail || ''
                         }));
                         setOnlineResults(results);
+                        setIsSearching(false);
+                    } else if (data.totalItems === 0) {
+                        setIsSearching(false);
+                        alert('No books found for "' + onlineSearchTerm + '". Try a different search term.');
                     } else {
-                        alert('No books found. Try a different search term.');
+                        setIsSearching(false);
+                        alert('No results returned. The search may have timed out. Please try again.');
                     }
                 } catch (error) {
                     console.error('Search error:', error);
-                    alert('Error processing search results. Please try again.');
-                } finally {
                     setIsSearching(false);
+                    alert('Error processing search results: ' + error.message);
+                } finally {
                     // Clean up
                     delete window[callbackName];
-                    document.head.removeChild(script);
+                    if (document.head.contains(script)) {
+                        document.head.removeChild(script);
+                    }
                 }
             };
             
@@ -157,9 +165,11 @@
             script.src = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(onlineSearchTerm)}&maxResults=15&printType=books&callback=${callbackName}`;
             script.onerror = () => {
                 setIsSearching(false);
-                alert('Unable to search online. Please check your internet connection.');
+                alert('Unable to connect to Google Books. Please check your internet connection and try again.');
                 delete window[callbackName];
-                document.head.removeChild(script);
+                if (document.head.contains(script)) {
+                    document.head.removeChild(script);
+                }
             };
             
             document.head.appendChild(script);
