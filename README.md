@@ -2,7 +2,7 @@
 
 A collection of interactive, educational web applications designed for young learners (ages 8-12). These tools support reading development, critical thinking, and family entertainment.
 
-🔗 **Live Demo:** <https://yourusername.github.io/kidkit/>
+🔗 **Live Site:** <https://session-forge.github.io/kidkit/>
 
 ## 📚 Tools Included
 
